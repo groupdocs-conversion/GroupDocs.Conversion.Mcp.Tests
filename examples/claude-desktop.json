@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "groupdocs-conversion": {
+      "type": "stdio",
+      "command": "dnx",
+      "args": ["GroupDocs.Conversion.Mcp@26.5.0", "--yes"],
+      "env": {
+        "GROUPDOCS_MCP_STORAGE_PATH": "/absolute/path/to/documents"
+      }
+    }
+  }
+}
