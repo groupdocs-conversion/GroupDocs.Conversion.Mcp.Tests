@@ -22,7 +22,7 @@ internal sealed class ToolCatalog
 
     public McpClientTool Convert => Resolve("convert");
     public McpClientTool SupportedFormats => Resolve("supported");
-    public McpClientTool DocumentInfo => Resolve("documentinfo");
+    public McpClientTool DocumentInfo => Resolve("document_info");
 
     private McpClientTool Resolve(string keyword) =>
         _tools.FirstOrDefault(t => t.Name.Contains(keyword, StringComparison.OrdinalIgnoreCase))
