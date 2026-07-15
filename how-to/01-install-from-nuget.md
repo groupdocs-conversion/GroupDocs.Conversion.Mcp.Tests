@@ -28,7 +28,7 @@ Windows and `~/.dotnet/dnx` on Linux/macOS.
 ## Option 1 — dnx (recommended)
 
 ```bash
-dnx GroupDocs.Conversion.Mcp@26.5.2 --yes
+dnx GroupDocs.Conversion.Mcp@26.7.0 --yes
 ```
 
 The first invocation downloads the package into the NuGet cache; subsequent
@@ -44,7 +44,7 @@ dnx GroupDocs.Conversion.Mcp --yes                # latest stable, refreshed eve
 dnx GroupDocs.Conversion.Mcp --prerelease --yes   # latest including pre-releases
 ```
 
-| | Pinned (`@26.5.2`) | Unpinned |
+| | Pinned (`@26.7.0`) | Unpinned |
 |---|---|---|
 | Use for | Client configs committed to repos, CI, shared team setups | Quick local smoke tests, dev machines that should track latest |
 | Reproducibility | identical version on every machine / session | depends on when each machine first pulled |
@@ -85,7 +85,7 @@ Pipe an `initialize` + `tools/list` sequence to see the advertised tools:
   echo '{"jsonrpc":"2.0","method":"notifications/initialized"}'
   echo '{"jsonrpc":"2.0","id":2,"method":"tools/list"}'
   sleep 2
-) | GROUPDOCS_MCP_STORAGE_PATH=./docs dnx GroupDocs.Conversion.Mcp@26.5.2 --yes
+) | GROUPDOCS_MCP_STORAGE_PATH=./docs dnx GroupDocs.Conversion.Mcp@26.7.0 --yes
 ```
 
 You should see two JSON-RPC responses containing the three advertised tools:
@@ -128,8 +128,25 @@ Set via environment variables when launching:
 ```bash
 GROUPDOCS_MCP_STORAGE_PATH=/data/documents \
 GROUPDOCS_LICENSE_PATH=/secrets/GroupDocs.Total.lic \
-dnx GroupDocs.Conversion.Mcp@26.5.2 --yes
+dnx GroupDocs.Conversion.Mcp@26.7.0 --yes
 ```
+
+## Native prerequisites
+
+The underlying GroupDocs engine uses `System.Drawing` (GDI+) for some
+operations. When you run the server **natively** (via `dnx` or the global
+dotnet tool) on Linux or macOS, install the native `libgdiplus` library first:
+
+| Platform | Setup |
+|---|---|
+| Windows | Nothing — GDI+ is built into the OS. |
+| Linux | `sudo apt-get install -y libgdiplus libfontconfig1 ttf-mscorefonts-installer` |
+| macOS | `brew install mono-libgdiplus` |
+| Docker | Nothing — the image already bundles `libgdiplus`. |
+
+Skipping this on Linux/macOS surfaces as `DllNotFoundException: libgdiplus` in
+the tool response. The simplest zero-setup option on Linux/macOS is the
+**Docker image**.
 
 ## License
 
@@ -149,7 +166,7 @@ The server's `initialize` response includes `serverInfo.version`. With an MCP
 client:
 
 ```text
-initialize response → serverInfo: { name: "GroupDocs.Conversion.Mcp", version: "26.5.2" }
+initialize response → serverInfo: { name: "GroupDocs.Conversion.Mcp", version: "26.7.0" }
 ```
 
 This value comes from the published assembly's `AssemblyInformationalVersion`
@@ -166,6 +183,7 @@ authoritative. If you want to script-check it, see
 | First run hangs for ~30 s | Package is downloading from nuget.org into cache | Normal. Subsequent runs are fast. |
 | `No license configured. Running in evaluation mode.` | No `GROUPDOCS_LICENSE_PATH` | Expected. `Convert` output will be watermarked; the read-only tools are unaffected. Set `GROUPDOCS_LICENSE_PATH` to drop the watermark. |
 | `Convert` output has a watermark | Evaluation mode | Set `GROUPDOCS_LICENSE_PATH` to a valid `.lic` file. |
+| `DllNotFoundException: libgdiplus` (Linux / macOS) | Native graphics deps not installed | Install them — see [Native prerequisites](#native-prerequisites). Linux: `apt-get install libgdiplus …`; macOS: `brew install mono-libgdiplus`. Or run via Docker. |
 | Client can't see any tools | MCP client didn't finish `initialize` handshake before issuing `tools/list` | Check your client config — most handle this automatically. If hand-rolling, always send `notifications/initialized` after `initialize`. |
 
 ## Next steps
