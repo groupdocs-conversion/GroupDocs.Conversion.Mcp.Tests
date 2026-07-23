@@ -6,8 +6,7 @@ namespace GroupDocs.Conversion.Mcp.IntegrationTests;
 
 /// GroupDocs.Conversion.Convert produces output in evaluation mode (with
 /// watermarks) so happy-path assertions work in both eval and licensed mode.
-[Collection(McpServerCollection.Name)]
-public class ConvertTests
+public class ConvertTests : IClassFixture<McpServerFixture>
 {
     private readonly McpServerFixture _fixture;
     private readonly ITestOutputHelper _output;
