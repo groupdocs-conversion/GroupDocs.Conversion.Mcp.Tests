@@ -5,8 +5,7 @@ using Xunit.Abstractions;
 
 namespace GroupDocs.Conversion.Mcp.IntegrationTests;
 
-[Collection(McpServerCollection.Name)]
-public class GetSupportedFormatsTests
+public class GetSupportedFormatsTests : IClassFixture<McpServerFixture>
 {
     private readonly McpServerFixture _fixture;
     private readonly ITestOutputHelper _output;
